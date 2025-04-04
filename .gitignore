@@ -18,3 +18,7 @@ configs/*
 data/*
 docs/build/*
 nh-env/
+
+# test files
+scratch.ipynb
+test.py
