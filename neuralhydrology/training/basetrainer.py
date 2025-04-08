@@ -22,6 +22,7 @@ from neuralhydrology.training import get_loss_obj, get_optimizer, get_regulariza
 from neuralhydrology.training.logger import Logger
 from neuralhydrology.utils.config import Config
 from neuralhydrology.utils.logging_utils import setup_logging
+from neuralhydrology.training.earlystopper import EarlyStopper
 
 LOGGER = logging.getLogger(__name__)
 
@@ -205,6 +206,7 @@ class BaseTrainer(object):
         Train the model for the number of epochs specified in the run configuration, and perform validation after every
         ``validate_every`` epochs. Model and optimizer state are saved after every ``save_weights_every`` epochs.
         """
+        early_stopper = EarlyStopper(patience = 5, min_delta = 0.0002)
         for epoch in range(self._epoch + 1, self._epoch + self.cfg.epochs + 1):
             if epoch in self.cfg.learning_rate.keys():
                 LOGGER.info(f"Setting learning rate to {self.cfg.learning_rate[epoch]}")
@@ -233,6 +235,11 @@ class BaseTrainer(object):
                     print_msg += f" -- Median validation metrics: "
                     print_msg += ", ".join(f"{k}: {v:.5f}" for k, v in valid_metrics.items() if k != 'avg_total_loss')
                     LOGGER.info(print_msg)
+                
+                if epoch > 5:
+                    if (early_stopper.early_stop(valid_metrics['avg_total_loss'])):
+                        LOGGER.info(f"Early stopping triggered at epoch {epoch} with validation loss {valid_metrics['avg_total_loss']:.5f}. Training stopped.")
+                        break
 
         # make sure to close tensorboard to avoid losing the last epoch
         if self.cfg.log_tensorboard:
@@ -286,9 +293,7 @@ class BaseTrainer(object):
                 break
 
             for key in data.keys():
-                if key.startswith('x_d'):
-                    data[key] = {k: v.to(self.device) for k, v in data[key].items()}
-                elif not key.startswith('date'):
+                if not key.startswith('date'):
                     data[key] = data[key].to(self.device)
 
             # apply possible pre-processing to the batch before the forward pass
