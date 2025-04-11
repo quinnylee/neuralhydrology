@@ -46,20 +46,20 @@ class EarlyStopper:
         return stop
 
     
-class EarlyStopperNSE:
-    '''This class helps to stop training if the validation NSE is not increasing over certain number of epochs (patience)'''
-    def __init__(self, patience= 5, min_delta=0):
-        self.patience = patience
-        self.min_delta = min_delta
-        self.counter = 0
-        self.max_NSE = -100000000
+# class EarlyStopperNSE:
+#     '''This class helps to stop training if the validation NSE is not increasing over certain number of epochs (patience)'''
+#     def __init__(self, patience= 5, min_delta=0):
+#         self.patience = patience
+#         self.min_delta = min_delta
+#         self.counter = 0
+#         self.max_NSE = -100000000
     
-    def early_stop(self, NSE):
-        if (NSE >= self.max_NSE):
-            self.max_NSE = NSE
-            self.counter = 0
-        elif NSE <= (self.max_NSE - self.min_delta):
-            self.counter += 1
-            if(self.counter) >= self.patience:
-                return True
-        return False
+#     def early_stop(self, NSE):
+#         if (NSE >= self.max_NSE):
+#             self.max_NSE = NSE
+#             self.counter = 0
+#         elif NSE <= (self.max_NSE - self.min_delta):
+#             self.counter += 1
+#             if(self.counter) >= self.patience:
+#                 return True
+#         return False
