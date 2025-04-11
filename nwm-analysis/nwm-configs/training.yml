@@ -3,17 +3,19 @@
 # experiment name, used as folder name
 experiment_name: nwm-analysis-alabama-small
 
+run_dir: ../runs
+
 # files to specify training, validation and test basins (relative to code root or absolute path)
-train_basin_file: ./data/verysmall/verysmall_train.txt
-validation_basin_file: ./data/verysmall/verysmall_val.txt
-test_basin_file: ./data/verysmall/verysmall_test.txt
+train_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/small/train.txt
+validation_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/small/val.txt
+test_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/small/test.txt
 
 # training, validation and test time periods (format = 'dd/mm/yyyy')
-train_start_date: '01/10/1979'
+train_start_date: '01/10/1994'
 train_end_date: '30/09/2014'
-validation_start_date: '01/10/2014'
+validation_start_date: '30/09/2014'
 validation_end_date: '30/09/2018'
-test_start_date: '01/10/2018'
+test_start_date: '01/10/2019'
 test_end_date: '01/02/2023'
 
 # which GPU (id) to use [in format of cuda:0, cuda:1 etc, or cpu, mps or None]
@@ -116,7 +118,7 @@ predict_last_n: 1
 seq_length: 365
 
 # Number of parallel workers used in the data pipeline
-num_workers: 30
+# num_workers: 30
 
 # Log the training loss every n steps
 log_interval: 20
