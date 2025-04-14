@@ -236,7 +236,7 @@ class BaseTrainer(object):
                     print_msg += ", ".join(f"{k}: {v:.5f}" for k, v in valid_metrics.items() if k != 'avg_total_loss')
                     LOGGER.info(print_msg)
                 
-                if epoch > 5:
+                if epoch > 75:
                     if (early_stopper.early_stop(valid_metrics['avg_total_loss'])):
                         LOGGER.info(f"Early stopping triggered at epoch {epoch} with validation loss {valid_metrics['avg_total_loss']:.5f}. Training stopped.")
                         break
