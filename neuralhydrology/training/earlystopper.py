@@ -1,6 +1,6 @@
 class EarlyStopper:
     '''Stops training if validation loss doesn't improve for `patience` epochs,
-    unless the last 3 losses improved consecutively.'''
+    unless the last round(patience/3) losses improved consecutively.'''
 
     def __init__(self, patience=5, min_delta=0):
         self.patience = patience
@@ -26,11 +26,11 @@ class EarlyStopper:
             self.counter = 0
             print(f"New minimum validation loss: {self.min_validation_loss}. Counter reset.")
         else:
-            # Only increment counter if no new min and not in the 3-batch improvement streak
-            if self.consecutive_improvements < 3:
+            # Only increment counter if no new min and not in the 1/3rd of patient batch improvement streak
+            if self.consecutive_improvements < int(round(self.patience / 3)):
                 self.counter += 1
-                print(f"No new min. Counter incremented to {self.counter}")
-            elif self.consecutive_improvements < 10:
+                print(f"No new min. Counter incremented to {self.counter}")   
+            elif self.consecutive_improvements < int(round(self.patience / 2)):
                 self.counter = 0
                 print(f"Consecutive improvements between 3 and 10. Counter reset to 0")
             else:
@@ -44,22 +44,3 @@ class EarlyStopper:
 
         self.previous_loss = validation_loss
         return stop
-
-    
-# class EarlyStopperNSE:
-#     '''This class helps to stop training if the validation NSE is not increasing over certain number of epochs (patience)'''
-#     def __init__(self, patience= 5, min_delta=0):
-#         self.patience = patience
-#         self.min_delta = min_delta
-#         self.counter = 0
-#         self.max_NSE = -100000000
-    
-#     def early_stop(self, NSE):
-#         if (NSE >= self.max_NSE):
-#             self.max_NSE = NSE
-#             self.counter = 0
-#         elif NSE <= (self.max_NSE - self.min_delta):
-#             self.counter += 1
-#             if(self.counter) >= self.patience:
-#                 return True
-#         return False

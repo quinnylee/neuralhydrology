@@ -52,6 +52,12 @@ class BaseTrainer(object):
         self._allow_subsequent_nan_losses = cfg.allow_subsequent_nan_losses
         self._disable_pbar = cfg.verbose == 0
         self._max_updates_per_epoch = cfg.max_updates_per_epoch
+        self._early_stopping = cfg.early_stopping
+        self._patience_early_stopping = cfg.patience_early_stopping
+        self._minimum_epochs_before_early_stopping = cfg.minimum_epochs_before_early_stopping
+        self._dynamic_learning_rate = cfg.dynamic_learning_rate
+        self._patience_dynamic_learning_rate = cfg.patience_dynamic_learning_rate
+        self._factor_dynamic_learning_rate = cfg.factor_dynamic_learning_rate
 
         # load train basin list and add number of basins to the config
         self.basins = load_basin_file(cfg.train_basin_file)
@@ -206,12 +212,33 @@ class BaseTrainer(object):
         Train the model for the number of epochs specified in the run configuration, and perform validation after every
         ``validate_every`` epochs. Model and optimizer state are saved after every ``save_weights_every`` epochs.
         """
-        early_stopper = EarlyStopper(patience = 5, min_delta = 0.0002)
+        if self._early_stopping == True:
+            if self._patience_early_stopping == 0:
+                LOGGER.info(f"Early stopping is set to true, but patience is not set. So, setting patience to default value of 5.")
+                self._patience_early_stopping = 5
+            if self._minimum_epochs_before_early_stopping == 0:
+                LOGGER.info(f"Early stopping is set to true, but minimum_epochs_before_early_stopping is not set. So, setting minimum_epochs_before_early_stopping to default value of 5.")
+                self._minimum_epochs_before_early_stopping = 5
+            
+            early_stopper = EarlyStopper(patience = self._patience_early_stopping, min_delta = 0.0001)
+
+        if self._dynamic_learning_rate == True:
+            if self._patience_dynamic_learning_rate == 0:
+                LOGGER.info(f"Dynamic learning rate is set to true, but patience is not set. So, setting patience to default value of 1.")
+                self._patience_dynamic_learning_rate = 1
+            if self._factor_dynamic_learning_rate == 0:
+                LOGGER.info(f"Dynamic learning rate is set to true, but factor is not set. So, setting factor to default value of 0.1.")
+                self._factor_dynamic_learning_rate = 0.1
+            if len(self.cfg.learning_rate.keys()) > 0:
+                LOGGER.info(f"Dynamic learning rate is set to true, so static learning rate is ignored.")  
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='min', factor=self._factor_dynamic_learning_rate, patience=self._patience_dynamic_learning_rate)
+
         for epoch in range(self._epoch + 1, self._epoch + self.cfg.epochs + 1):
-            if epoch in self.cfg.learning_rate.keys():
-                LOGGER.info(f"Setting learning rate to {self.cfg.learning_rate[epoch]}")
-                for param_group in self.optimizer.param_groups:
-                    param_group["lr"] = self.cfg.learning_rate[epoch]
+            if self._dynamic_learning_rate == False:
+                if epoch in self.cfg.learning_rate.keys():
+                    LOGGER.info(f"Setting learning rate to {self.cfg.learning_rate[epoch]}")
+                    for param_group in self.optimizer.param_groups:
+                        param_group["lr"] = self.cfg.learning_rate[epoch]
 
             self._train_epoch(epoch=epoch)
             avg_losses = self.experiment_logger.summarise()
@@ -236,10 +263,14 @@ class BaseTrainer(object):
                     print_msg += ", ".join(f"{k}: {v:.5f}" for k, v in valid_metrics.items() if k != 'avg_total_loss')
                     LOGGER.info(print_msg)
                 
-                if epoch > 75:
-                    if (early_stopper.early_stop(valid_metrics['avg_total_loss'])):
-                        LOGGER.info(f"Early stopping triggered at epoch {epoch} with validation loss {valid_metrics['avg_total_loss']:.5f}. Training stopped.")
-                        break
+
+                if self._early_stopping == True:
+                    if epoch > self._minimum_epochs_before_early_stopping:
+                        if (early_stopper.early_stop(valid_metrics['avg_total_loss'])):
+                            LOGGER.info(f"Early stopping triggered at epoch {epoch} with validation loss {valid_metrics['avg_total_loss']:.5f}. Training stopped.")
+                            break
+                if self._dynamic_learning_rate == True:
+                    scheduler.step(avg_losses['avg_total_loss'])
 
         # make sure to close tensorboard to avoid losing the last epoch
         if self.cfg.log_tensorboard:
@@ -293,8 +324,11 @@ class BaseTrainer(object):
                 break
 
             for key in data.keys():
-                if not key.startswith('date'):
+                if key.startswith('x_d'):
+                    data[key] = {k: v.to(self.device) for k, v in data[key].items()}
+                elif not key.startswith('date'):
                     data[key] = data[key].to(self.device)
+
 
             # apply possible pre-processing to the batch before the forward pass
             data = self.model.pre_model_hook(data, is_train=True)
