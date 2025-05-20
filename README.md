@@ -2,7 +2,7 @@
 This repository extends the Neuralhydrology library to explore streamflow prediction for upstream basins by combining environmental data from both upstream and downstream catchments. It retains the core structure of Neuralhydrology, but adds:
 
   - nwm-analysis/
-    - Contains everything needed to run our CONUS‑ and Alabama‑based experiments:
+    Contains everything needed to run our CONUS‑ and Alabama‑based experiments:
 
     - nwm-configs/
       - YAML config files defining all model‑training parameters.
