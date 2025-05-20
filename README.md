@@ -1,21 +1,21 @@
 
+This repository extends the Neuralhydrology library to explore streamflow prediction for upstream basins by combining environmental data from both upstream and downstream catchments. It retains the core structure of Neuralhydrology, but adds:
 
-This repo is based on the experimentation of prediction of streamflow of an upstream basin with combined environmental data of upstream basin and downstream basin with the help of Neuralhydrology library. 
-This repo looks exactly like Neuralhydrology's library, but we have added a nwm-analysis directory where we perform the experiment explained above in conus and alabama dataset.
-This repo has also added a few custom classes and a few features to improve the performance of our experiment.
+  -nwm-analysis/
+    -Contains everything needed to run our CONUS‑ and Alabama‑based experiments:
 
-What does nwm-analysis directory contain?
-  - nwm-configs: This directory contains config files, where you define all the parameters necessary for training the model
-  - nwm-data: This directory contains two directories al_runs, conus_rus, test, and a file.
-      - al_runs: This directory contains .txt files with the information of alabama catchments used for training, validating, and testing.
-      - conus_runs:  This directory contains .txt files with the information of conus catchments used for training, validating, and testing.
-      - randomdata.py: This code selects the basin pairs randomly and helps to create the txt files in the above 2 directoris.
+    -nwm-configs/
+      -YAML config files defining all model‑training parameters.
+    -nwm-data/
+      -al_runs/: .txt files listing Alabama catchments for training, validation, and testing.
+      -conus_runs/: .txt files listing CONUS catchments for training, validation, and testing.
 
-We also have an Archive directory that contains codes we worked on the past that might be of some use in the future, but is not too important right now.
+      -randomdata.py: Script that randomly pairs basins and generates the above .txt files.
 
+  -Archive/
+    -Legacy scripts and notebooks from earlier development stages—kept for reference but not actively maintained.
 
-
-Below this line, there is a a description about Neuralhydrology.
+Below this line is the standard description of the Neuralhydrology library.
 
 ![#](docs/source/_static/img/neural-hyd-logo-black.png)
 Python library to train neural networks with a strong focus on hydrological applications.
