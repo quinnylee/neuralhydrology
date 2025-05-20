@@ -1,14 +1,14 @@
 # --- Experiment configurations --------------------------------------------------------------------
 
 # experiment name, used as folder name
-experiment_name: nwm-analysis-conus
+experiment_name: nwm-analysis-al-final
 
-run_dir: ../runs/nwm-conus
+run_dir: ../runs/nwm-al
 
 # files to specify training, validation and test basins (relative to code root or absolute path)
-train_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/conus_runs/train0502.txt
-validation_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/conus_runs/val0502.txt
-test_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/conus_runs/test0502.txt
+train_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/al_runs/train0430.txt
+validation_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/al_runs/val0430.txt
+test_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/al_runs/test0430.txt
 
 # training, validation and test time periods (format = 'dd/mm/yyyy')
 train_start_date: '01/10/1979'
@@ -18,7 +18,7 @@ validation_end_date: '30/09/2008'
 test_start_date: '01/10/2008'
 test_end_date: '30/09/2011'
 
-# which GPU (id) to use [in format of cuda:0, cuda:1 etc, or cpu, mps or lsNone]
+# which GPU (id) to use [in format of cuda:0, cuda:1 etc, or cpu, mps or None]
 device: cuda:0
 
 # --- Validation configuration ---------------------------------------------------------------------
@@ -27,13 +27,15 @@ device: cuda:0
 validate_every: 1
 
 # specify how many random basins to use for validation
-validate_n_random_basins: 3
+# validate_n_random_basins: 3
 
 # specify which metrics to calculate during validation (see neuralhydrology.evaluation.metrics)
 # this can either be a list or a dictionary. If a dictionary is used, the inner keys must match the name of the
 # target_variable specified below. Using dicts allows for different metrics per target variable.
 metrics:
   - NSE
+  - KGE
+  - RMSE
 
 # --- Model configuration --------------------------------------------------------------------------
 
@@ -56,22 +58,22 @@ hidden_size: 20
 initial_forget_bias: 3
 
 # Dropout applied to the output of the LSTM
-output_dropout: 0.4
+output_dropout: 0.3
 
 # ----> Embedding network settings <----
 
 # define embedding network for static inputs
-# statics_embedding:
-#   type: fc
-#   # define number of neurons per layer in the FC network used as embedding network
-#   hiddens:
-#     - 30
-#     - 20
-#     - 64
-#   # activation function of embedding network
-#   activation: tanh
-#   # dropout applied to embedding network
-#   dropout: 0.0
+statics_embedding:
+  type: fc
+  # define number of neurons per layer in the FC network used as embedding network
+  hiddens:
+    - 30
+    - 20
+    - 64
+  # activation function of embedding network
+  activation: tanh
+  # dropout applied to embedding network
+  dropout: 0.0
 
 # define embedding network for dynamic inputs
 dynamics_embedding:
@@ -96,13 +98,18 @@ loss: MSE
 
 # specify learning rates to use starting at specific epochs (0 is the initial learning rate)
 learning_rate:
-  0: 8e-4
+  0: 1e-2
+  30: 5e-3
+  40: 1e-3
+  50: 5e-4
+  80: 1e-4
+  100: 5e-5
 
 # Mini-batch size
-batch_size: 512
+batch_size: 1024
 
 # Number of training epochs
-epochs: 5
+epochs: 200
 
 # If a value, clips the gradients during training to that norm.
 clip_gradient_norm: 1
@@ -113,7 +120,7 @@ predict_last_n: 1
 
 # Length of the input sequence
 # If use_frequencies is used, this needs to be a dict mapping each frequency to a seq_length, else an int.
-seq_length: 1024
+seq_length: 360
 
 # Number of parallel workers used in the data pipeline
 # num_workers: 30
@@ -136,22 +143,22 @@ save_weights_every: 1
 dataset: nwm3retro
 
 # Path to data set root
-data_dir: /media/volume/NeuralHydrology/Test_Quinn_Data/CAMELS_data
+data_dir: /media/volume/NeuralHydrology/Test_Quinn_Data/forty_year_test_data
 
 # Forcing product [daymet, maurer, maurer_extended, nldas, nldas_extended, nldas_hourly]
 # can be either a list of forcings or a single forcing product
 dynamic_inputs:
-# - DLWRF_surface
-# - PRES_surface
-# - VGRD_10maboveground
-# - UGRD_10maboveground
-# - DSWRF_surface
+- DLWRF_surface
+- PRES_surface
+- VGRD_10maboveground
+- UGRD_10maboveground
+- DSWRF_surface
 - precip_rate
-# - DLWRF_surface_d
-# - PRES_surface_d
-# - VGRD_10maboveground_d
-# - UGRD_10maboveground_d
-# - DSWRF_surface_d
+- DLWRF_surface_d
+- PRES_surface_d
+- VGRD_10maboveground_d
+- UGRD_10maboveground_d
+- DSWRF_surface_d
 - precip_rate_d
 - streamflow_d
 
@@ -164,20 +171,10 @@ clip_targets_to_zero:
 - streamflow
 
 # Which CAMELS attributes to use. Leave empty if none should be used
-# static_attributes:
-# - basin_area
-# - basin_length
-# - reach_length
-# - basin_area_d
-# - basin_length_d
-# - reach_length_d
-
-
-
-# --- Miscellaneous configuration ------------------------------------------------------------------
-early_stopping: True   # if True, training will stop if validation loss does not improve for n epochs
-patience_early_stopping: 10 #number of subsequent epochs to wait before stopping
-minimum_epochs_before_early_stopping: 50 # minimum number of epochs before early stopping triggers
-dynamic_learning_rate: True # if True, learning rate will be reduced if training loss does not improve for n epochs
-patience_dynamic_learning_rate: 3 # number of subsequent epochs to wait before reducing learning rate
-factor_dynamic_learning_rate: 0.8 # factor by which to reduce learning rate
+static_attributes:
+- basin_area
+- basin_length
+- reach_length
+- basin_area_d
+- basin_length_d
+- reach_length_d

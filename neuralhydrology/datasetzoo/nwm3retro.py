@@ -189,5 +189,5 @@ def load_timeseries(data_dir: Path, basin: str) -> pd.DataFrame:
     xr = xr.rename({'time':'date'})
     xr = xr.drop_vars(['ids', 'ids_d', 'Time', 'Time_d'])
     xr = xr.squeeze("catchment-id", drop=True)
-    xr = xr.assign_coords(date=pd.to_datetime(xr["date"].values, origin="1979-10-01", unit="h"))
+    xr = xr.assign_coords(date=pd.to_datetime(xr["date"].values)) #, origin="1979-10-01", unit="h"))
     return xr.to_dataframe()
