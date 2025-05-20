@@ -11,7 +11,7 @@ This repository extends the Neuralhydrology library to explore streamflow predic
       - al_runs/: .txt files listing Alabama catchments for training, validation, and testing.
       - conus_runs/: .txt files listing CONUS catchments for training, validation, and testing.
 
-      - randomdata.py: Script that randomly pairs basins and generates the above .txt files.
+      - randomdata.py: Script that randomly selects paired basins and generates the above .txt files.
 
   - Archive/
     - Legacy scripts and notebooks from earlier development stages—kept for reference but not actively maintained.
