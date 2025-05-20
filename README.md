@@ -1,19 +1,19 @@
 
 This repository extends the Neuralhydrology library to explore streamflow prediction for upstream basins by combining environmental data from both upstream and downstream catchments. It retains the core structure of Neuralhydrology, but adds:
 
-  -nwm-analysis/
-    -Contains everything needed to run our CONUS‑ and Alabama‑based experiments:
+  - nwm-analysis/
+    - Contains everything needed to run our CONUS‑ and Alabama‑based experiments:
 
-    -nwm-configs/
-      -YAML config files defining all model‑training parameters.
-    -nwm-data/
-      -al_runs/: .txt files listing Alabama catchments for training, validation, and testing.
-      -conus_runs/: .txt files listing CONUS catchments for training, validation, and testing.
+    - nwm-configs/
+      - YAML config files defining all model‑training parameters.
+    - nwm-data/
+      - al_runs/: .txt files listing Alabama catchments for training, validation, and testing.
+      - conus_runs/: .txt files listing CONUS catchments for training, validation, and testing.
 
-      -randomdata.py: Script that randomly pairs basins and generates the above .txt files.
+      - randomdata.py: Script that randomly pairs basins and generates the above .txt files.
 
-  -Archive/
-    -Legacy scripts and notebooks from earlier development stages—kept for reference but not actively maintained.
+  - Archive/
+    - Legacy scripts and notebooks from earlier development stages—kept for reference but not actively maintained.
 
 Below this line is the standard description of the Neuralhydrology library.
 
