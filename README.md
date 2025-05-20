@@ -1,5 +1,20 @@
-![#](docs/source/_static/img/neural-hyd-logo-black.png)
 
+
+This repo is based on the experimentation of prediction of streamflow of an upstream basin with combined environmental data of upstream basin and downstream basin with the help of Neuralhydrology library. 
+This repo looks exactly like Neuralhydrology's library, but we have added a nwm-analysis directory where we perform the experiment explained above in conus and alabama dataset.
+This repo has also added a few custom classes and a few features to improve the performance of our experiment.
+
+What does nwm-analysis directory contain?
+  - nwm-configs: This directory contains config files, where you define all the parameters necessary for training the model
+  - nwm-data: This directory contains two directories al_runs, conus_rus, test, and a file.
+      - al_runs: This directory contains .txt files with the information of alabama catchments used for training, validating, and testing.
+      - conus_runs:  This directory contains .txt files with the information of conus catchments used for training, validating, and testing.
+      - randomdata.py: This code selects the basin pairs randomly and helps to create the txt files in the above 2 directoris.
+
+We also have an Archive directory that contains codes we worked on the past that might be of some use in the future, but is not too important right now.
+
+Below this line, there is a a description about Neuralhydrology.
+![#](docs/source/_static/img/neural-hyd-logo-black.png)
 Python library to train neural networks with a strong focus on hydrological applications.
 
 This package has been used extensively in research over the last years and was used in various academic publications. 
