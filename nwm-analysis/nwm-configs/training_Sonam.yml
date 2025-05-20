@@ -141,17 +141,17 @@ data_dir: /media/volume/NeuralHydrology/Test_Quinn_Data/CAMELS_data
 # Forcing product [daymet, maurer, maurer_extended, nldas, nldas_extended, nldas_hourly]
 # can be either a list of forcings or a single forcing product
 dynamic_inputs:
-# - DLWRF_surface
-# - PRES_surface
-# - VGRD_10maboveground
-# - UGRD_10maboveground
-# - DSWRF_surface
+- DLWRF_surface
+- PRES_surface
+- VGRD_10maboveground
+- UGRD_10maboveground
+- DSWRF_surface
 - precip_rate
-# - DLWRF_surface_d
-# - PRES_surface_d
-# - VGRD_10maboveground_d
-# - UGRD_10maboveground_d
-# - DSWRF_surface_d
+- DLWRF_surface_d
+- PRES_surface_d
+- VGRD_10maboveground_d
+- UGRD_10maboveground_d
+- DSWRF_surface_d
 - precip_rate_d
 - streamflow_d
 
