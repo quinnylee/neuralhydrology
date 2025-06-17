@@ -6,17 +6,17 @@ experiment_name: nwm-analysis-conus
 run_dir: ../runs/nwm-conus
 
 # files to specify training, validation and test basins (relative to code root or absolute path)
-train_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/conus_runs/train0502.txt
-validation_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/conus_runs/val0502.txt
-test_basin_file: /media/volume/NeuralHydrology/neuralhydrology/nwm-analysis/nwm-data/conus_runs/test0502.txt
+train_basin_file: /home/exouser/Documents/NWM_Analysis/neuralhydrology/nwm-analysis/nwm-data/test_runs/train0502.txt
+validation_basin_file: /home/exouser/Documents/NWM_Analysis/neuralhydrology/nwm-analysis/nwm-data/test_runs/val0502.txt
+test_basin_file: /home/exouser/Documents/NWM_Analysis/neuralhydrology/nwm-analysis/nwm-data/test_runs/test0502.txt
 
 # training, validation and test time periods (format = 'dd/mm/yyyy')
-train_start_date: '01/10/1979'
-train_end_date: '30/09/2004'
-validation_start_date: '01/10/2003'
-validation_end_date: '30/09/2008'
-test_start_date: '01/10/2008'
-test_end_date: '30/09/2011'
+train_start_date: '01/10/2002'
+train_end_date: '30/09/2003'
+validation_start_date: '01/10/2004'
+validation_end_date: '30/09/2005'
+test_start_date: '01/10/2006'
+test_end_date: '30/09/2007'
 
 # which GPU (id) to use [in format of cuda:0, cuda:1 etc, or cpu, mps or lsNone]
 device: cuda:0
@@ -102,7 +102,7 @@ learning_rate:
 batch_size: 512
 
 # Number of training epochs
-epochs: 5
+epochs: 10
 
 # If a value, clips the gradients during training to that norm.
 clip_gradient_norm: 1
@@ -176,8 +176,8 @@ clip_targets_to_zero:
 
 # --- Miscellaneous configuration ------------------------------------------------------------------
 early_stopping: True   # if True, training will stop if validation loss does not improve for n epochs
-patience_early_stopping: 10 #number of subsequent epochs to wait before stopping
-minimum_epochs_before_early_stopping: 50 # minimum number of epochs before early stopping triggers
+patience_early_stopping: 3 #number of subsequent epochs to wait before stopping
+minimum_epochs_before_early_stopping: 1 # minimum number of epochs before early stopping triggers
 dynamic_learning_rate: True # if True, learning rate will be reduced if training loss does not improve for n epochs
 patience_dynamic_learning_rate: 3 # number of subsequent epochs to wait before reducing learning rate
 factor_dynamic_learning_rate: 0.8 # factor by which to reduce learning rate

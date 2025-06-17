@@ -919,31 +919,48 @@ class Config(object):
     @property
     def early_stopping(self) -> bool:
         """Whether to use early stopping. Defaults to False if not set."""
-        return self._cfg.get("early_stopping", False)
+        if self._cfg.get("validate_every", None) == 1:
+            return self._cfg.get("early_stopping", False)
+        else:
+            raise ValueError(
+                "Early stopping can only be used if validation is performed every epoch (validate_every=1). "
+                "Set validate_every=1 in the config to use early stopping."
+            )
 
     @property
     def patience_early_stopping(self) -> int:
-        """Number of epochs with no improvement before stopping. Defaults to 5 if not set. Done in basetrainer.py class with logged info."""
-        return self._cfg.get("patience_early_stopping", 0)
-    
+        """Number of epochs with no improvement before stopping."""
+        if self._cfg.get("early_stopping", False):
+            return self._get_value_verbose("patience_early_stopping")
+        
     @property
     def minimum_epochs_before_early_stopping(self) -> int:
-        """Minimum number of epochs before early stopping can be triggered. Defaults to 5 if not set. Done in basetrainer.py class with logged info."""
-        return self._cfg.get("minimum_epochs_before_early_stopping", 0)
+        """Minimum number of epochs before early stopping can be triggered."""
+        if self._cfg.get("early_stopping", False):
+            return self._get_value_verbose("minimum_epochs_before_early_stopping")
     
     @property
     def dynamic_learning_rate(self) -> bool:
         """Whether to use  dynamic learning rate. Defaults to False if not set."""
-        return self._cfg.get("dynamic_learning_rate", False)
+        if self._cfg.get("validate_every", None) == 1:
+            return self._cfg.get("dynamic_learning_rate", False)
+        else:
+            raise ValueError(
+                "Dynamic learning rate can only be used if validation is performed every epoch (validate_every=1). "
+                "Set validate_every=1 in the config to use dynamic learning rate."
+            )
     
     @property
     def patience_dynamic_learning_rate(self) -> int:
-        """Number of epochs with no improvement before reducing learning rate. Defaults to 3 if not set. Done in basetrainer.py class with logged info."""
-        return self._cfg.get("patience_dynamic_learning_rate", 0)
+        """Number of epochs with no improvement before reducing learning rate."""
+        if self._cfg.get("dynamic_learning_rate", False):
+            return self._get_value_verbose("patience_dynamic_learning_rate")
+        
     @property
     def factor_dynamic_learning_rate(self) -> float:
-        """Factor by which to reduce learning rate. Defaults to 0.1 if not set. Done in basetrainer.py class with logged info."""
-        return self._cfg.get("factor_dynamic_learning_rate", 0)
+        """Factor by which to reduce learning rate."""
+        if self._cfg.get("dynamic_learning_rate", False):
+            return self._get_value_verbose("factor_dynamic_learning_rate")
     
     def _get_embedding_spec(self, embedding_spec: dict) -> dict:
         if isinstance(embedding_spec, bool) and embedding_spec:  #
